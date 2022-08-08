@@ -11,7 +11,7 @@ func main() {
 	r := gin.Default()
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-			"message": "Shortmy cuck",
+			"message": "Hello from urling.io",
 		})
 	})
 
@@ -21,6 +21,10 @@ func main() {
 
 	r.GET("/:shortUrl", func(c *gin.Context) {
 		handler.HandleShortUrlRedirect(c)
+	})
+
+	r.GET("/ping", func(c *gin.Context) {
+		handler.Ping(c)
 	})
 
 	// Note that store initialization happens here

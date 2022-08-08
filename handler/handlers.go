@@ -21,9 +21,9 @@ func CreateShortUrl(c *gin.Context) {
 	}
 
 	shortUrl := shortener.GenerateShortLink(creationRequest.LongUrl, creationRequest.UserId)
-	store.SaveUrlMapping(shortUrl, creationRequest.LongUrl, creationRequest.UserId)
+	store.SaveUrlMapping(shortUrl, creationRequest.LongUrl)
 
-	host := "http://localhost:9808/"
+	host := "http://127.0.0.1:9808/"
 	c.JSON(200, gin.H{
 		"message":   "short url created successfully",
 		"short_url": host +shortUrl,
@@ -33,5 +33,14 @@ func CreateShortUrl(c *gin.Context) {
 func HandleShortUrlRedirect(c *gin.Context) {
 	shortUrl := c.Param("shortUrl")
 	initialUrl := store.RetrieveInitialUrl(shortUrl)
-	c.Redirect(302, initialUrl)
+	if initialUrl == nil {
+		c.AbortWithStatus(404)
+		return
+	}
+
+	c.Redirect(302, *initialUrl)
+}
+
+func Ping(c *gin.Context) {
+	c.String(http.StatusOK, "ping")
 }

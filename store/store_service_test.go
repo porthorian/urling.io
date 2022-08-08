@@ -17,14 +17,16 @@ func TestStoreInit(t *testing.T) {
 
 func TestInsertionAndRetrieval(t *testing.T) {
 	initialLink := "https://urlame.io"
-	userUUId := "e0dba740-fc4b-4977-872c-d360239e6b1a"
 	shortURL := "Jsz4k57oAX"
 
 	// Persist data mapping
-	SaveUrlMapping(shortURL, initialLink, userUUId)
+	SaveUrlMapping(shortURL, initialLink)
 
 	// Retrieve initial URL
-	retrievedUrl := RetrieveInitialUrl(shortURL)
+	retrievedUrl := *RetrieveInitialUrl(shortURL)
 
 	assert.Equal(t, initialLink, retrievedUrl)
+
+	failedUrl := RetrieveInitialUrl("derp2do")
+	assert.True(t, failedUrl == nil)
 }
