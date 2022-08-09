@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v9"
 	"time"
+	"os"
 )
 
 // Define the struct wrapper around raw Redis client
@@ -29,7 +30,7 @@ const CacheDuration = 6 * time.Hour
 // Initializing the store service and return a store pointer
 func InitializeStore() *StorageService {
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     "127.0.0.1:6379",
+		Addr:     os.Getenv("REDIS_ADDRESS"),
 		Password: "",
 		DB:       0,
 	})
