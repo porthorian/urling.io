@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   urlshortener:
-    image: api.urling.io:latest
+    image: registry.digitalocean.com/kriekon-01/api.urling.io:latest
     restart: always
     ports:
       - 9808:9808
@@ -10,23 +10,15 @@ services:
       - redis
     environment:
       GIN_MODE: release
-      REDIS_ADDRESS: 127.0.0.1:6969
-    networks:
-      - urling.io
+      REDIS_ADDRESS: cache:6379
   redis:
+    container_name: cache
     image: redis:7.0.4
     restart: always
     ports:
-      - 6379:6969
+      - 6379
     volumes:
       - cache:/data
-    networks:
-      - urling.io
 volumes:
   cache:
     driver: local
-
-networks:
-  urling.io:
-    external: true
-    driver: bridge

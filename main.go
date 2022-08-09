@@ -15,7 +15,7 @@ func main() {
 		})
 	})
 
-	r.POST("/create-short-url", func(c *gin.Context) {
+	r.POST("/shorten", func(c *gin.Context) {
 		handler.CreateShortUrl(c)
 	})
 

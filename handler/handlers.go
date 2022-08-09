@@ -5,6 +5,7 @@ import (
 	"github.com/Porthorian/urling.io/store"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"fmt"
 )
 
 // Request model definition
@@ -23,10 +24,20 @@ func CreateShortUrl(c *gin.Context) {
 	shortUrl := shortener.GenerateShortLink(creationRequest.LongUrl, creationRequest.UserId)
 	store.SaveUrlMapping(shortUrl, creationRequest.LongUrl)
 
-	host := "http://127.0.0.1:9808/"
+	scheme := "http"
+	if c.Request.TLS != nil {
+		scheme = "https"
+	}
+
+	proto := c.Request.Header.Get("X-Forwarded-Proto")
+	if &proto != nil {
+		scheme = proto
+	}
+
+	host := fmt.Sprintf("%s://%s", scheme, c.Request.Host)
 	c.JSON(200, gin.H{
-		"message":   "short url created successfully",
-		"short_url": host +shortUrl,
+		"message": "shortened",
+		"short_url": fmt.Sprintf("%s/%s", host, shortUrl),
 	})
 }
 
@@ -42,5 +53,5 @@ func HandleShortUrlRedirect(c *gin.Context) {
 }
 
 func Ping(c *gin.Context) {
-	c.String(http.StatusOK, "ping")
+	c.String(http.StatusOK, "pong")
 }
