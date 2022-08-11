@@ -48,7 +48,7 @@ export default class HomeView extends Vue {
     this.showSpinner = true
     axios.post('https://api.urling.io/shorten', {
       long_url: this.longUrl,
-      user_id: 'hello'
+      user_id: Math.random().toString(36).slice(2, 15)
     })
       .then((res) => {
         this.shortenUrl = res.data.short_url
