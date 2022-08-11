@@ -2,18 +2,21 @@
   <div class="home">
     <div class="box_container">
       <div class="item">
-        <h1>Shorten Me Up Baby</h1>
-      </div>
-      <div v-if="shortenUrl != ''">
-        {{ shortenUrl }}
+        <h1 class="box-header">Shorten Me Up Baby</h1>
       </div>
       <div class="item form_container">
-        <form v-on:submit.prevent="submitForm">
+        <div class="item shorten_url" v-if="shortenUrl != ''">
+          <span v-on:click="copy">{{ textDisplayCopy }}</span>
+        </div>
+        <form class="item" v-on:submit.prevent="submitForm">
           <div class="item">
             <input type="text" v-model="longUrl" placeholder="Make me shorter please." />
           </div>
           <div class="item form_button">
-            <button>Shorten</button>
+            <button>
+              <spinner class="center-spinner" v-if="showSpinner"/>
+              <span v-else>Shorten</span>
+            </button>
           </div>
         </form>
       </div>
@@ -22,27 +25,53 @@
 </template>
 
 <script lang="ts">
-import { Vue } from 'vue-class-component'
+import { Options, Vue } from 'vue-class-component'
 import axios from 'axios'
+import useClipboard from 'vue-clipboard3'
+import spinner from '../components/atom_spinner.vue'
+
+const { toClipboard } = useClipboard()
+
+@Options({
+  components: {
+    spinner
+  }
+})
 
 export default class HomeView extends Vue {
   longUrl = ''
   shortenUrl = ''
+  textDisplayCopy = ''
+  showSpinner = false
+
   submitForm () {
+    this.showSpinner = true
     axios.post('https://api.urling.io/shorten', {
       long_url: this.longUrl,
       user_id: 'hello'
     })
       .then((res) => {
-        console.log(res)
         this.shortenUrl = res.data.short_url
+        this.textDisplayCopy = this.shortenUrl
       })
       .catch((error) => {
         console.log(error)
       })
       .finally(() => {
-        console.log('All done')
+        this.showSpinner = false
       })
+  }
+
+  async copy () {
+    try {
+      this.textDisplayCopy = 'Text Copied'
+      await toClipboard(this.shortenUrl)
+      setTimeout(() => {
+        this.textDisplayCopy = this.shortenUrl
+      }, 500)
+    } catch (e) {
+      console.error(e)
+    }
   }
 }
 </script>
@@ -69,14 +98,30 @@ export default class HomeView extends Vue {
     box-shadow: 0 0 3px 3px #005883;
   }
 
+  .box-header {
+    margin: 50px 0px;
+  }
+
   .form_container {
     display: flex;
-    height: 80%;
+    height: 48%;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+    position: relative;
+
+    .shorten_url {
+      position: absolute;
+      top: 0px;
+
+      span:hover {
+        cursor: copy;
+      }
+    }
 
     form {
       width: 100%;
+      min-width: 100%;
     }
 
     .item {
@@ -100,10 +145,19 @@ export default class HomeView extends Vue {
         border-radius: 10px;
         padding: 10px;
       }
+
+      button:hover {
+        background-color: #7ba1a9;
+      }
     }
   }
 
   .item {
     width: 100%;
+  }
+
+  .spinner-center {
+    margin-left: auto;
+    margin-right: auto;
   }
 </style>
