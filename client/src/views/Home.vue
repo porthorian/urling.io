@@ -1,8 +1,8 @@
 <template>
-  <div class="home">
+  <div class="center-content">
     <div class="box_container">
       <div class="item">
-        <h1 class="box-header">Shorten Me Up Baby</h1>
+        <h1 class="box-header">Shorten that URL</h1>
       </div>
       <div class="item form_container">
         <div class="item shorten_url" v-if="shortenUrl != ''">
@@ -14,7 +14,7 @@
           </div>
           <div class="item form_button">
             <button>
-              <spinner class="center-spinner" v-if="showSpinner"/>
+              <spinner class="spinner-center" v-if="showSpinner"/>
               <span v-else>Shorten</span>
             </button>
           </div>
@@ -46,12 +46,14 @@ export default class HomeView extends Vue {
 
   submitForm () {
     this.showSpinner = true
-    axios.post('https://api.urling.io/shorten', {
+    // @ts-expect-error: this.apiUrl is already defined in the vue prototype
+    axios.post(`${this.apiUrl}shorten`, {
       long_url: this.longUrl,
       user_id: Math.random().toString(36).slice(2, 15)
     })
       .then((res) => {
-        this.shortenUrl = res.data.short_url
+        const shortUrlId = res.data.shorturl_id
+        this.shortenUrl = `${window.location.origin}/${shortUrlId}`
         this.textDisplayCopy = this.shortenUrl
       })
       .catch((error) => {
@@ -77,16 +79,6 @@ export default class HomeView extends Vue {
 </script>
 
 <style lang="scss">
-  .home {
-    display: flex;
-    flex-wrap: wrap;
-    margin: auto;
-    height: 100%;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-  }
-
   .box_container {
     max-height: 400px;
     max-width: 800px;

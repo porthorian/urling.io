@@ -5,6 +5,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'home',
     component: () => import('../views/Home.vue')
+  },
+  {
+    path: '/:shorturl_id',
+    name: 'redirect',
+    component: () => import('../views/RedirectLoader.vue')
   }
 ]
 

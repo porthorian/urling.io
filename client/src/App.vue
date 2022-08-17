@@ -33,4 +33,14 @@ body {
   max-width: 1800px;
   height: 100%;
 }
+
+.center-content {
+    display: flex;
+    flex-wrap: wrap;
+    margin: auto;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
 </style>
