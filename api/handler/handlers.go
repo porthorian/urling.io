@@ -4,6 +4,7 @@ import (
 	"github.com/Porthorian/urling.io/shortener"
 	"github.com/Porthorian/urling.io/store"
 	"github.com/gin-gonic/gin"
+	"strings"
 	"net/http"
 	"fmt"
 )
@@ -21,7 +22,12 @@ func CreateShortUrl(c *gin.Context) {
 		return
 	}
 
-	shortUrl := shortener.GenerateShortLink(creationRequest.LongUrl, creationRequest.UserId)
+	newUrl := creationRequest.LongUrl
+	if !strings.Contains("https://", creationRequest.LongUrl) && !strings.Contains("http://", creationRequest.LongUrl) {
+		newUrl = fmt.Sprintf("http://%s", creationRequest.LongUrl)
+	}
+
+	shortUrl := shortener.GenerateShortLink(newUrl, creationRequest.UserId)
 	store.SaveUrlMapping(shortUrl, creationRequest.LongUrl)
 
 	scheme := "http"
@@ -30,10 +36,9 @@ func CreateShortUrl(c *gin.Context) {
 	}
 
 	proto := c.Request.Header.Get("X-Forwarded-Proto")
-	if &proto != nil {
+	if proto != "" {
 		scheme = proto
 	}
-
 	host := fmt.Sprintf("%s://%s", scheme, c.Request.Host)
 	c.JSON(200, gin.H{
 		"message": "shortened",
