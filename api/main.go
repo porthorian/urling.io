@@ -24,7 +24,11 @@ func main() {
 	})
 
 	r.GET("/:shortUrlId", func(c *gin.Context) {
-		handler.HandleShortUrlRedirect(c)
+		handler.HandleShortUrlRedirect(c, true)
+	})
+
+	r.HEAD("/:shortUrlId", func(c *gin.Context) {
+		handler.HandleShortUrlRedirect(c, false)
 	})
 
 	r.GET("/ping", func(c *gin.Context) {

@@ -24,7 +24,7 @@ func CreateShortUrl(c *gin.Context) {
 
 	newUrl := creationRequest.LongUrl
 	if !strings.HasPrefix(creationRequest.LongUrl, "https://") && !strings.HasPrefix(creationRequest.LongUrl, "http://") {
-		newUrl = fmt.Sprintf("http://%s", creationRequest.LongUrl)
+		newUrl = fmt.Sprintf("https://%s", creationRequest.LongUrl)
 	}
 
 	shortUrlId := shortener.GenerateShortLink(newUrl, creationRequest.UserId)
@@ -43,10 +43,11 @@ func CreateShortUrl(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "shortened",
 		"short_url": fmt.Sprintf("%s/%s", host, shortUrlId),
+		"shorturl_id": shortUrlId,
 	})
 }
 
-func HandleShortUrlRedirect(c *gin.Context) {
+func HandleShortUrlRedirect(c *gin.Context, redirect bool) {
 	shortUrlId := c.Param("shortUrlId")
 	initialUrl := store.RetrieveInitialUrl(shortUrlId)
 	if initialUrl == nil {
@@ -54,7 +55,11 @@ func HandleShortUrlRedirect(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(302, *initialUrl)
+	c.Header("Access-Control-Expose-Headers", "X-RedirectUrl")
+	c.Header("X-RedirectUrl", *initialUrl)
+	if redirect {
+		c.Redirect(302, *initialUrl)
+	}
 }
 
 func Ping(c *gin.Context) {
