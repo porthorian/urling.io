@@ -47,7 +47,7 @@ export default class HomeView extends Vue {
   submitForm () {
     this.showSpinner = true
     // @ts-expect-error: this.apiUrl is already defined in the vue prototype
-    axios.post(`${this.apiUrl}shorten`, {
+    axios.post(`${this.apiUrl()}shorten`, {
       long_url: this.longUrl,
       user_id: Math.random().toString(36).slice(2, 15)
     })

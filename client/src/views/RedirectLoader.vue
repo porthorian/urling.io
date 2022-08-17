@@ -40,7 +40,7 @@ export default class RedirectLoader extends Vue {
     axios.request({
       method: 'HEAD',
       // @ts-expect-error: this.apiUrl is already defined in the vue prototype
-      url: this.apiUrl + this.$route.params.shorturl_id
+      url: this.apiUrl() + this.$route.params.shorturl_id
     })
       .then((res) => {
         this.redirectUrl = res.headers['x-redirecturl']
