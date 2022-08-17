@@ -23,12 +23,12 @@ func CreateShortUrl(c *gin.Context) {
 	}
 
 	newUrl := creationRequest.LongUrl
-	if !strings.Contains("https://", creationRequest.LongUrl) && !strings.Contains("http://", creationRequest.LongUrl) {
+	if !strings.HasPrefix(creationRequest.LongUrl, "https://") && !strings.HasPrefix(creationRequest.LongUrl, "http://") {
 		newUrl = fmt.Sprintf("http://%s", creationRequest.LongUrl)
 	}
 
-	shortUrl := shortener.GenerateShortLink(newUrl, creationRequest.UserId)
-	store.SaveUrlMapping(shortUrl, creationRequest.LongUrl)
+	shortUrlId := shortener.GenerateShortLink(newUrl, creationRequest.UserId)
+	store.SaveUrlMapping(shortUrlId, newUrl)
 
 	scheme := "http"
 	if c.Request.TLS != nil {
@@ -42,13 +42,13 @@ func CreateShortUrl(c *gin.Context) {
 	host := fmt.Sprintf("%s://%s", scheme, c.Request.Host)
 	c.JSON(200, gin.H{
 		"message": "shortened",
-		"short_url": fmt.Sprintf("%s/%s", host, shortUrl),
+		"short_url": fmt.Sprintf("%s/%s", host, shortUrlId),
 	})
 }
 
 func HandleShortUrlRedirect(c *gin.Context) {
-	shortUrl := c.Param("shortUrl")
-	initialUrl := store.RetrieveInitialUrl(shortUrl)
+	shortUrlId := c.Param("shortUrlId")
+	initialUrl := store.RetrieveInitialUrl(shortUrlId)
 	if initialUrl == nil {
 		c.AbortWithStatus(404)
 		return
