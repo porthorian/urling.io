@@ -5,9 +5,11 @@
         <h1 class="box-header">Shorten that URL</h1>
       </div>
       <div class="item form_container">
-        <div class="item shorten_url" v-if="shortenUrl != ''">
-          <span v-on:click="copy">{{ textDisplayCopy }}</span>
-        </div>
+        <Transition name="fade">
+          <div class="item shorten_url" v-if="shortenUrl != ''">
+            <span v-on:click="copy">{{ textDisplayCopy }}</span>
+          </div>
+        </Transition>
         <form class="item" v-on:submit.prevent="submitForm">
           <div class="item">
             <input type="text" v-model="longUrl" placeholder="Make me shorter please." />
