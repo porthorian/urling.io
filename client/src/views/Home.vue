@@ -1,5 +1,5 @@
 <template>
-  <div class="center-content">
+  <div class="center-content home">
     <div class="box_container">
       <div class="item">
         <h1 class="box-header">Shorten that URL</h1>
@@ -19,6 +19,25 @@
             </button>
           </div>
         </form>
+        <button class="toggle_button" @click="showCode = !showCode">Toggle API Example</button>
+      </div>
+      <div class="item">
+        <Transition name="fade">
+          <div class="code_container" v-if="showCode">
+            <pre>
+#!/bin/bash
+
+curl "{{ apiUrl() }}shorten" \
+-H 'Content-Type: application/json;' \
+-X POST --data-binary @- &lt;&lt; EOF
+{
+  "long_url": "https://www.youtube.com/watch?v=iik25wqIuFo",
+  "user_id": "rick_rolled"
+}
+EOF
+            </pre>
+          </div>
+        </Transition>
       </div>
     </div>
   </div>
@@ -43,6 +62,8 @@ export default class HomeView extends Vue {
   shortenUrl = ''
   textDisplayCopy = ''
   showSpinner = false
+
+  showCode = false
 
   submitForm () {
     this.showSpinner = true
@@ -79,19 +100,30 @@ export default class HomeView extends Vue {
 </script>
 
 <style lang="scss">
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.5s ease;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+
+  .home {
+    max-height: 700px;
+  }
   .box_container {
-    max-height: 400px;
     max-width: 800px;
     width: 100%;
-    height: 100%;
     background-color: #002F5C;
-    padding: 15px;
+    padding: 15px 15px 20px 15px;
     border-radius: 10px;
     box-shadow: 0 0 3px 3px #005883;
   }
 
   .box-header {
-    margin: 50px 0px;
+    margin: 30px 0px;
   }
 
   .form_container {
@@ -103,8 +135,7 @@ export default class HomeView extends Vue {
     position: relative;
 
     .shorten_url {
-      position: absolute;
-      top: 0px;
+      margin: 30px 0px;
 
       span:hover {
         cursor: copy;
@@ -129,16 +160,25 @@ export default class HomeView extends Vue {
     }
 
     .form_button {
-      margin-top: 20px;
+      margin: 30px 0px;
 
       button {
         max-width: 200px;
         width: 100%;
         border-radius: 10px;
         padding: 10px;
-      }
 
-      button:hover {
+        &:hover {
+          background-color: #7ba1a9;
+        }
+      }
+    }
+
+    .toggle_button {
+      border-radius: 10px;
+      padding: 10px;
+
+      &:hover {
         background-color: #7ba1a9;
       }
     }
@@ -151,5 +191,23 @@ export default class HomeView extends Vue {
   .spinner-center {
     margin-left: auto;
     margin-right: auto;
+  }
+
+  .code_container {
+    pre {
+      background: #050430;
+      box-shadow: 0 0 3px 3px #005883;
+      page-break-inside: avoid;
+      font-family: monospace;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 1.6em;
+      max-width: 100%;
+      overflow: auto;
+      padding: 1em 1.5em;
+      display: block;
+      word-wrap: break-word;
+      text-align: initial;
+    }
   }
 </style>
