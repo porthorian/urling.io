@@ -169,6 +169,8 @@ export default class HomeView extends Vue {
         width: 100%;
         border-radius: 10px;
         padding: 10px;
+        border: none;
+        box-shadow: 0 0 3px 3px #005883;
 
         &:hover {
           background-color: #7ba1a9;
@@ -179,6 +181,8 @@ export default class HomeView extends Vue {
     .toggle_button {
       border-radius: 10px;
       padding: 10px;
+      border: none;
+      box-shadow: 0 0 3px 3px #005883;
 
       &:hover {
         background-color: #7ba1a9;
